@@ -13,6 +13,7 @@ export function customCheck(options: CustomCheckOptions): IntegrationConfig {
     check: customCheckImpl,
     name: options.name,
     host: options.host || "localhost",
+    customCheckerFunction: options.customCheckerFunction,
   };
 }
 

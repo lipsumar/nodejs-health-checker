@@ -4,6 +4,7 @@ import { checkMemcachedClient } from "../services/memcache-service";
 
 type MemcacheCheckOptions = BaseCheckOptions & {
   host: string;
+  port?: number;
 };
 
 export function memcacheCheck(options: MemcacheCheckOptions): IntegrationConfig {

@@ -1,4 +1,10 @@
-import { Dialects, HealthTypes, IntegrationConfig } from "../../src/interfaces/types";
+import { Dialects, IntegrationConfig } from "../../src/interfaces/types";
+import { redisCheck } from "../../src/integrations/redis";
+import { memcacheCheck } from "../../src/integrations/memcache";
+import { webCheck } from "../../src/integrations/web";
+import { dynamoCheck } from "../../src/integrations/dynamo";
+import { databaseCheck } from "../../src/integrations/database";
+import { customCheck } from "../../src/integrations/custom";
 import { REDIS_HOST, MEMCACHED_HOST, WEB_HOST, DYNAMO_HOST, DATABASE_HOST } from "../../src/envs";
 
 export interface HealthCheckDetailedTestScenario {
@@ -13,85 +19,76 @@ export interface HealthCheckDetailedTestConfig {
 export const scenarios: HealthCheckDetailedTestScenario = {
   redisTruthy: {
     expected: true,
-    config: {
+    config: redisCheck({
       name: "jest-test-redis",
-      type: HealthTypes.Redis,
       host: REDIS_HOST,
-    },
+    }),
   },
   redisFalsy: {
     expected: false,
-    config: {
+    config: redisCheck({
       name: "jest-test-redis",
-      type: HealthTypes.Redis,
       host: REDIS_HOST,
       port: 100,
       auth: {
         password: "sdf",
       },
-    },
+    }),
   },
   memcachedTruthy: {
     expected: true,
-    config: {
+    config: memcacheCheck({
       name: "jest-test-memcached",
-      type: HealthTypes.Memcached,
       host: MEMCACHED_HOST,
       port: 11211,
-    },
+    }),
   },
   memcachedDefaultTimeout: {
     expected: true,
-    config: {
+    config: memcacheCheck({
       name: "jest-test-memcached",
-      type: HealthTypes.Memcached,
       host: MEMCACHED_HOST,
       port: 11211,
       timeout: 1001,
-    },
+    }),
   },
   memcachedFalsy: {
     expected: false,
-    config: {
+    config: memcacheCheck({
       name: "jest-test-memcached",
-      type: HealthTypes.Memcached,
       host: MEMCACHED_HOST,
       port: 11299,
-    },
+    }),
   },
   webIntegrationTruthy: {
     expected: true,
-    config: {
+    config: webCheck({
       name: "jest-test-web",
-      type: HealthTypes.Web,
-      host: WEB_HOST,
-    },
+      url: WEB_HOST,
+    }),
   },
   webIntegrationFalsy: {
     // status 404
     expected: false,
-    config: {
+    config: webCheck({
       name: "jest-test-web",
-      type: HealthTypes.Web,
-      host: `${WEB_HOST}sssssssss`,
+      url: `${WEB_HOST}sssssssss`,
       timeout: 4000,
       headers: [{ key: "Accept", value: "application/json" }],
-    },
+    }),
   },
   webIntegrationTimeout: {
     expected: false,
-    config: {
+    config: webCheck({
       name: "jest-test-web",
-      type: HealthTypes.Web,
-      host: `${WEB_HOST}sssssssss`,
+      url: `${WEB_HOST}sssssssss`,
       timeout: 4,
       headers: [{ key: "Accept", value: "application/json" }],
-    },
+    }),
   },
   dynamoIntegrationTruthy: {
     expected: true,
-    config: {
-      type: HealthTypes.Dynamo,
+    config: dynamoCheck({
       name: "jest-test-dynamodb",
       host: DYNAMO_HOST,
       port: 8000,
@@ -100,84 +97,71 @@ export const scenarios: HealthCheckDetailedTestScenario = {
         access_key_id: "",
         secret_access_key: "",
       },
-    },
+    }),
   },
   dynamoIntegrationFalsy: {
     expected: false,
-    config: {
-      type: HealthTypes.Dynamo,
+    config: dynamoCheck({
       name: "jest-test-dynamodb",
       host: DYNAMO_HOST,
       port: 8001,
-    },
+    }),
   },
   databaseIntegrationTruthy: {
     expected: true,
-    config: {
-      type: HealthTypes.Database,
+    config: databaseCheck({
       name: "jest-test-postgres",
       host: DATABASE_HOST,
-      dbPort: 5432,
+      port: 5432,
       dbName: "postgres",
       dbUser: "postgres",
       dbPwd: "root",
       dbDialect: Dialects.postgres,
-    },
+    }),
   },
   databaseIntegrationFalsy: {
     expected: false,
-    config: {
-      type: HealthTypes.Database,
+    config: databaseCheck({
       name: "jest-test-postgres",
       host: DATABASE_HOST,
-      dbPort: 8001,
-    },
+      port: 8001,
+      dbDialect: "postgres",
+      dbUser: "foo",
+      dbPwd: "foo",
+      dbName: "foo",
+    }),
   },
   customIntegrationTruthy: {
     expected: true,
-    config: {
-      type: HealthTypes.Custom,
+    config: customCheck({
       name: "custom-integration",
-      host: "not-needed",
       customCheckerFunction: async () => {
         return {
           status: true,
         };
       },
-    },
+    }),
   },
   customIntegrationFalsy: {
     expected: false,
-    config: {
-      type: HealthTypes.Custom,
+    config: customCheck({
       name: "custom-integration",
-      host: "not-needed",
       customCheckerFunction: async () => {
         return {
           status: false,
           error: { message: "Something has failed" },
         };
       },
-    },
-  },
-  customIntegrationMissingFunction: {
-    expected: false,
-    config: {
-      type: HealthTypes.Custom,
-      name: "custom-integration-missing-function",
-      host: "my-custom-integration-host",
-      customCheckerFunction: undefined,
-    },
+    }),
   },
   customIntegrationFunctionThrows: {
     expected: false,
-    config: {
-      type: HealthTypes.Custom,
+    config: customCheck({
       name: "custom-integration-missing-function",
       host: "my-custom-integration-host",
       customCheckerFunction: () => {
         throw new Error("Help!");
       },
-    },
+    }),
   },
 };
