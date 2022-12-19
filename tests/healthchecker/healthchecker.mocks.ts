@@ -1,4 +1,4 @@
-import { Dialects, HealthTypes, IntegrationConfig } from "../../src/interfaces/types";
+import { Dialects, IntegrationConfig } from "../../src/interfaces/types";
 import { redisCheck } from "../../src/integrations/redis";
 import { memcacheCheck } from "../../src/integrations/memcache";
 import { webCheck } from "../../src/integrations/web";
