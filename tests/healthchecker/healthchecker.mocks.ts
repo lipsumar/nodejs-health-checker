@@ -135,7 +135,6 @@ export const scenarios: HealthCheckDetailedTestScenario = {
     expected: true,
     config: customCheck({
       name: "custom-integration",
-      host: "not-needed",
       customCheckerFunction: async () => {
         return {
           status: true,
@@ -147,7 +146,6 @@ export const scenarios: HealthCheckDetailedTestScenario = {
     expected: false,
     config: customCheck({
       name: "custom-integration",
-      host: "not-needed",
       customCheckerFunction: async () => {
         return {
           status: false,
