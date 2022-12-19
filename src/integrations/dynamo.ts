@@ -3,7 +3,7 @@ import { getDeltaTime } from "../lib";
 import { checkDynamodbClient } from "../services/dynamodb-service";
 
 type DynamoCheckOptions = BaseCheckOptions & {
-  Aws: Aws;
+  Aws?: Aws;
   host: string;
   port: number;
 };

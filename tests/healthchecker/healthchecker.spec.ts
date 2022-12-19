@@ -1,4 +1,5 @@
-import { HealthcheckerDetailedCheck, HealthcheckerSimpleCheck } from "../../src/healthchecker/healthchecker";
+import { HealthcheckerSimpleCheck } from "../../src/simpleCheck";
+import { HealthcheckerDetailedCheck } from "../../src/detailedCheck";
 import { scenarios } from "./healthchecker.mocks";
 
 // all this tests must be exec in docker context
